@@ -23,13 +23,17 @@ public class Servidor {
 
 class MarcoServidor extends JFrame implements Runnable{
 	
+	LaminaServidor l;
+	
 	public MarcoServidor() {
 		
 		setTitle("Servidor");
 		
 		setBounds(1200,300,250,350);
 		
-		add(new LaminaServidor());
+		l=new LaminaServidor();
+		
+		add(l);
 		
 		Thread mihilo=new Thread(this);
 		
@@ -42,6 +46,8 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 		try {
 			
+			
+			
 			ServerSocket servidor=new ServerSocket(9999);
 			
 			Socket misocket=servidor.accept();
@@ -49,6 +55,10 @@ class MarcoServidor extends JFrame implements Runnable{
 			DataInputStream flujoEntrada=new DataInputStream(misocket.getInputStream());
 			
 			String mensajeTexto=flujoEntrada.readUTF();
+			
+			l.getArea().append("\n" + mensajeTexto);
+			
+			misocket.close();
 			
 			
 			
@@ -67,6 +77,8 @@ class LaminaServidor extends JPanel{
 	
 	public LaminaServidor() {
 		
+		
+		
 		setLayout(new BorderLayout());
 		
 		area=new JTextArea(10,20);
@@ -75,6 +87,13 @@ class LaminaServidor extends JPanel{
 		
 		add(panel,BorderLayout.CENTER);
 		
+		this.area=area;
+		
+	}
+	
+	public JTextArea getArea() {
+		
+		return area;
 	}
 	
 }
