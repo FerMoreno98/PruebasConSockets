@@ -40,7 +40,7 @@ class MarcoCliente extends JFrame{
 	
 }
 
-class LaminaCliente extends JPanel{
+class LaminaCliente extends JPanel implements Runnable{
 	
 	private JTextField areaTexto,nick,ip;
 	
@@ -77,6 +77,10 @@ class LaminaCliente extends JPanel{
 		
 		
 		enviar.addActionListener(new EnviaTexto());
+		
+		Thread mihilo=new Thread(this);
+		
+		mihilo.start();
 		
 		
 		
@@ -122,6 +126,36 @@ class LaminaCliente extends JPanel{
 				System.out.println(e1.getMessage());
 			}
 			
+		}
+		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+		try {
+			
+			ServerSocket servidorCliente=new ServerSocket(9090);
+			
+			Socket cliente;
+			
+			PaqueteEnvio paqueteRecibido;
+			
+			while(true) {
+				
+				cliente=servidorCliente.accept();
+				
+				ObjectInputStream flujoEntrada=new ObjectInputStream(cliente.getInputStream());
+				
+				paqueteRecibido=(PaqueteEnvio) flujoEntrada.readObject();
+				
+				campochat.append("\n" + paqueteRecibido.getNick() + ": "+ paqueteRecibido.getMensaje());
+			}
+			
+		}catch(Exception e) {
+			
+			e.printStackTrace();
 		}
 		
 	}
