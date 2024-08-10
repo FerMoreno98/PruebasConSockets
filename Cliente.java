@@ -42,11 +42,13 @@ class MarcoCliente extends JFrame{
 
 class LaminaCliente extends JPanel{
 	
-	private JTextField areaTexto;
+	private JTextField areaTexto,nick,ip;
 	
 	private JLabel cliente;
 	
 	private JButton enviar;
+	
+	private JTextArea campochat;
 	
 	public LaminaCliente() {
 		
@@ -54,11 +56,21 @@ class LaminaCliente extends JPanel{
 		
 		JPanel miLamina=new JPanel();
 		
-		miLamina.add(cliente=new JLabel("Cliente"));
+		miLamina.add(nick=new JTextField(5));
+		
+		miLamina.add(cliente=new JLabel("CHAT"));
+		
+		miLamina.add(ip=new JTextField(10));
+		
+		miLamina.add(campochat=new JTextArea(12,20));
+		
+		campochat.setEditable(false);
 		
 		miLamina.add(areaTexto=new JTextField(20));
 		
 		miLamina.add(enviar=new JButton("Enviar"));
+		
+		
 		
 		add(miLamina,BorderLayout.CENTER);
 		
@@ -81,12 +93,26 @@ class LaminaCliente extends JPanel{
 			try {
 				//Creamos el socket que hace de puente entre el cliente y el servidor
 				Socket miSocket=new Socket("192.168.56.1",9999);
+				
+				PaqueteEnvio datos=new PaqueteEnvio();
+				
+				datos.setNick(nick.getText());
+				
+				datos.setIp(ip.getText());
+				
+				datos.setMensaje(areaTexto.getText());
+				
+				ObjectOutputStream paqueteDatos=new ObjectOutputStream(miSocket.getOutputStream());
+				
+				paqueteDatos.writeObject(datos);
+				
+				miSocket.close();
 				//creamos un dataoutputStream para crear un flujo de datos de salida
-				DataOutputStream flujoSalida=new DataOutputStream(miSocket.getOutputStream());
+			/*	DataOutputStream flujoSalida=new DataOutputStream(miSocket.getOutputStream());
 				//le decimos que lo escriba
 				flujoSalida.writeUTF(areaTexto.getText());
 				
-				flujoSalida.close();
+				flujoSalida.close();*/
 				
 			} catch (UnknownHostException e1) {
 				// TODO Auto-generated catch block
@@ -99,4 +125,36 @@ class LaminaCliente extends JPanel{
 		}
 		
 	}
+}
+
+class PaqueteEnvio implements Serializable{
+	
+	private String nick,ip,mensaje;
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getMensaje() {
+		return mensaje;
+	}
+
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+	
+	
+	
 }
